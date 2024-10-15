@@ -1,0 +1,23 @@
+{
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "proseWrap": "never",
+    "htmlWhitespaceSensitivity": "strict",
+    "endOfLine": "lf",
+    "arrowParens": "avoid",
+    "tailwindConfig": "./frontend-app/tailwind.config.js",
+    "overrides": [
+        {
+            "files": "*.hbs",
+            "options": {
+                "singleQuote": false,
+                "parser": "html"
+            }
+        }
+    ]
+}
