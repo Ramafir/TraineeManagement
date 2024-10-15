@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .bg-primary {
+        background: linear-gradient(180deg, #0369a1 0%, #0ea5e9 100%);
+    }
+    .bg-secondary {
+        background: #f5f5f5;
+    }
+}
+
+@layer components {
+    .link-primary {
+        @apply cursor-pointer text-primary-600;
+    }
+}
