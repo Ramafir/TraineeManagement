@@ -44,26 +44,42 @@
                 <v-card class="flex flex-col items-center justify-between py-8 min-h-[350px] max-w-[500px] relative">
                     <div class="flex flex-col items-center mt-8">
                         <v-avatar size="120" class="mb-4 mx-auto">
-                            <img src="https://via.placeholder.com/150" alt="User avatar" />
+                            <img :src="formData.avatar || 'https://via.placeholder.com/150'" alt="User avatar" />
                         </v-avatar>
                     </div>
                     <v-btn
                         variant="outlined"
                         class="absolute bottom-4 left-4 right-1 py-2 mr-2"
                         prepend-icon="mdi-camera"
-                        @click="changePhoto"
+                        @click="openUrlDialog"
                     >
                         Change Photo
                     </v-btn>
                 </v-card>
             </v-col>
         </v-row>
+
+        <v-dialog v-model="urlDialog" max-width="400">
+            <v-card>
+                <v-card-title>
+                    <span class="text-h6">Enter Avatar URL</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="avatarUrl" label="Photo URL" outlined dense />
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="green" @click="updatePhotoUrl">Save</v-btn>
+                    <v-btn @click="urlDialog = false">Cancel</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
 <script lang="ts">
 import { mapActions } from 'pinia';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { maxLength, minLength, required } from '@vuelidate/validators';
 
 import { useUsersStore } from '@/store/modules/users';
 
@@ -81,14 +97,34 @@ export default defineComponent({
     data() {
         const defaultFormData = {
             first_name: '',
-            last_name: ''
+            last_name: '',
+            avatar: ''
         };
 
         return {
             isProcessing: false,
             initValue: { ...defaultFormData },
             defaultFormData,
-            formData: { ...defaultFormData }
+            formData: { ...defaultFormData },
+            urlDialog: false,
+            avatarUrl: ''
+        };
+    },
+
+    validations() {
+        return {
+            formData: {
+                first_name: {
+                    required,
+                    minLength: minLength(2),
+                    maxLength: maxLength(250)
+                },
+                last_name: {
+                    required,
+                    minLength: minLength(2),
+                    maxLength: maxLength(250)
+                }
+            }
         };
     },
 
@@ -105,24 +141,35 @@ export default defineComponent({
     methods: {
         ...mapActions(useUsersStore, ['store', 'update']),
 
-        async submitHandler() {
-            this.isProcessing = true;
+        openUrlDialog() {
+            this.avatarUrl = this.formData.avatar;
+            this.urlDialog = true;
+        },
 
+        updatePhotoUrl() {
+            this.formData.avatar = this.avatarUrl;
+            this.urlDialog = false;
+        },
+
+        async submitHandler() {
             try {
                 const data = {
                     first_name: this.formData.first_name,
-                    last_name: this.formData.last_name
+                    last_name: this.formData.last_name,
+                    avatar: this.formData.avatar
                 };
 
                 if (this.editMode) {
                     await this.update(data, this.selectedId);
+                    this.$toast('User updated successfully!');
                 } else {
                     await this.store(data);
+                    this.$toast('User added successfully!');
                 }
 
                 this.$router.push('/');
             } catch (error) {
-                console.log(error);
+                this.$toastError();
             } finally {
                 this.isProcessing = false;
             }

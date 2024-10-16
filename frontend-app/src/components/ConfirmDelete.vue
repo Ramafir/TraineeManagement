@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="isModalShown" persistent scrollable height="500" width="500">
+    <v-dialog v-model="isModalShown" persistent scrollable height="300" width="500">
         <v-card class="p-3">
             <v-card-title> Are you sure? </v-card-title>
 
