@@ -1,10 +1,13 @@
 <template>
-    <v-card-title class="pl-0">User list</v-card-title>
+    <v-card-title class="pl-0 text-3xl text-gray-600">User list</v-card-title>
     <v-card>
         <div class="flex justify-end mb-4">
-            <v-btn prepend-icon="mdi-plus" class="m-7 rounded-full" color="green-darken-4"> Add user </v-btn>
+            <v-btn prepend-icon="mdi-plus" class="m-7 rounded-full" color="green-darken-4" @click="addUser">
+                Add user
+            </v-btn>
         </div>
-        <v-data-table :items="users" :headers="labels" class="v-data-table--with-background">
+
+        <v-data-table :items="users" :items-per-page="6" :headers="labels" class="v-data-table--with-background">
             <template v-slot:[`item.avatar`]="{ item }">
                 <v-avatar size="32">
                     <img :src="item.avatar" alt="User avatar" />
@@ -58,6 +61,10 @@ export default defineComponent({
     },
 
     methods: {
+        addUser() {
+            this.$router.push('/user');
+        },
+
         editUser(user: IUserItem) {
             this.$emit('edit-user', user);
         },

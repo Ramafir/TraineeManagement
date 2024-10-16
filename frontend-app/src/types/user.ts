@@ -18,6 +18,12 @@ export interface IUserItem {
     avatar: string | null;
 }
 
+export type ICreateUserData = {
+    first_name: string;
+    last_name: string;
+    avatar?: string;
+};
+
 export interface IUserState {
     users: IUserItem[];
 }
