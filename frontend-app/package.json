@@ -19,6 +19,7 @@
   "dependencies": {
     "@heroicons/vue": "^2.1.5",
     "@mdi/font": "^7.4.47",
+    "axios": "^1.7.7",
     "pinia": "^2.2.4",
     "postcss": "^8.4.47",
     "vue": "^3.5.11",
