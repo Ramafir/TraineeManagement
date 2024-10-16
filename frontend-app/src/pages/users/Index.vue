@@ -1,24 +1,14 @@
 <template>
-    <v-card-title class="pl-0">User list</v-card-title>
-    <v-card>
-        <div class="flex justify-end mb-4">
-            <v-btn prepend-icon="mdi-plus" class="m-7 rounded-full" color="green-darken-4"> Add user </v-btn>
-        </div>
-        <v-data-table :items="items" :headers="labels" class="v-data-table--with-background">
-            <template v-slot:[`item.avatar`]="{ item }">
-                <v-avatar size="32">
-                    <img :src="item.avatar" alt="User avatar" />
-                </v-avatar>
-            </template>
+    <user-table :users="items" @delete-user="openConfirmDelete" />
 
-            <template v-slot:[`item.fullName`]="{ item }"> {{ item.first_name }} {{ item.last_name }} </template>
-
-            <template v-slot:[`item.action`]="{ item }">
-                <v-icon small class="mr-2" color="grey" @click="editUser(item)">mdi-pencil-box-outline</v-icon>
-                <v-icon small class="mr-2" color="grey" @click="deleteUser(item)">mdi-delete</v-icon>
-            </template>
-        </v-data-table>
-    </v-card>
+    <confirm-delete
+        v-if="showConfirmDelete"
+        :resource-name="resourceName"
+        :show-confirm-delete="showConfirmDelete"
+        :selected-item="selectedItem"
+        @canceled="showConfirmDelete = false"
+        @confirmed="onDelete"
+    />
 </template>
 
 <script lang="ts">
@@ -26,12 +16,16 @@ import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
 
 import { useUsersStore } from '@/store/modules/users';
+import UserTable from '@/components/users/UserTable.vue';
+import ConfirmDelete from '@/components/ConfirmDelete.vue';
 
-import type { IIndexData } from '@/types/user';
+import type { IIndexData, IUserItem } from '@/types/user';
 import type { ITableLabel } from '@/types/table';
 
 export default defineComponent({
     name: 'UsersPage',
+
+    components: { UserTable, ConfirmDelete },
 
     data(): IIndexData {
         return {
@@ -44,7 +38,16 @@ export default defineComponent({
                 search: ''
             },
             isLoading: false,
-            selectedId: ''
+            selectedId: '',
+            resourceName: 'user',
+            selectedItem: {
+                id: '',
+                first_name: '',
+                last_name: '',
+                email: '',
+                avatar: ''
+            },
+            showConfirmDelete: false
         };
     },
 
@@ -70,7 +73,7 @@ export default defineComponent({
     },
 
     methods: {
-        ...mapActions(useUsersStore, ['index']),
+        ...mapActions(useUsersStore, ['index', 'destroy']),
 
         async getUsers() {
             this.isLoading = true;
@@ -84,6 +87,22 @@ export default defineComponent({
                 console.log(error);
             } finally {
                 this.isLoading = false;
+            }
+        },
+
+        openConfirmDelete(selectedItem: IUserItem) {
+            this.selectedItem = selectedItem;
+            this.selectedId = selectedItem.id;
+            this.showConfirmDelete = true;
+        },
+
+        async onDelete() {
+            try {
+                await this.destroy(this.selectedId);
+
+                this.showConfirmDelete = false;
+            } catch (error) {
+                console.error(error);
             }
         }
     }

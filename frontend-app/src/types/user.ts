@@ -5,6 +5,9 @@ export interface IIndexData {
     pagination: Required<ITablePagination>;
     isLoading: boolean;
     selectedId: string;
+    resourceName: string;
+    selectedItem: IUserItem;
+    showConfirmDelete: boolean;
 }
 
 export interface IUserItem {
