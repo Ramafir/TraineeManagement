@@ -17,4 +17,5 @@ export interface ITablePagination {
     perPage?: number;
     descending?: boolean;
     search?: string;
+    totalPages?: number;
 }
