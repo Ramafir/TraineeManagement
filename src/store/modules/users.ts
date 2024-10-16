@@ -43,8 +43,10 @@ export const useUsersStore = defineStore('users', {
             return user;
         },
 
-        show(id: string): Promise<IUserItem> {
-            return axios.get(`/users/${id}`);
+        async show(id: string): Promise<IUserItem> {
+            const response = await axios.get(`/users/${id}`);
+
+            return response.data;
         },
 
         async update(data: ICreateUserData, id: string): Promise<IUserItem> {

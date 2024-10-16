@@ -86,14 +86,6 @@ import { useUsersStore } from '@/store/modules/users';
 export default defineComponent({
     name: 'AddUserPage',
 
-    props: {
-        selectedId: {
-            type: String,
-            required: false,
-            default: ''
-        }
-    },
-
     data() {
         const defaultFormData = {
             first_name: '',
@@ -107,7 +99,8 @@ export default defineComponent({
             defaultFormData,
             formData: { ...defaultFormData },
             urlDialog: false,
-            avatarUrl: ''
+            avatarUrl: '',
+            selectedId: ''
         };
     },
 
@@ -128,18 +121,29 @@ export default defineComponent({
         };
     },
 
+    async mounted() {
+        const userId = Array.isArray(this.$route.query.id) ? this.$route.query.id[0] : this.$route.query.id;
+
+        if (userId) {
+            const response: any = await this.show(userId);
+
+            this.formData = { ...response.data };
+            this.initValue = { ...response.data };
+        }
+    },
+
     computed: {
         hasFormChanged() {
             return JSON.stringify(this.initValue) !== JSON.stringify(this.formData);
         },
 
         editMode() {
-            return !!this.selectedId;
+            return !!this.$route.query.id;
         }
     },
 
     methods: {
-        ...mapActions(useUsersStore, ['store', 'update']),
+        ...mapActions(useUsersStore, ['store', 'update', 'show']),
 
         openUrlDialog() {
             this.avatarUrl = this.formData.avatar;
@@ -167,7 +171,7 @@ export default defineComponent({
                     this.$toast('User added successfully!');
                 }
 
-                this.$router.push('/');
+                this.$router.push({ name: 'users' });
             } catch (error) {
                 this.$toastError();
             } finally {
