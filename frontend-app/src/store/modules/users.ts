@@ -30,7 +30,23 @@ export const useUsersStore = defineStore('users', {
 
             const { data, total } = response.data;
 
+            this.users = data;
+
             return { data, total };
+        },
+
+        async destroy(id: string) {
+            await axios.delete(`/users/${id}`);
+
+            this.destroyed(id);
+        },
+
+        destroyed(id: string) {
+            const index = this.users.findIndex(user => user.id === id);
+
+            if (~index) {
+                this.users.splice(index, 1);
+            }
         }
     }
 });
