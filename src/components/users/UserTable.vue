@@ -31,13 +31,19 @@
             <template v-slot:[`item.fullName`]="{ item }"> {{ item.first_name }} {{ item.last_name }} </template>
 
             <template v-slot:[`item.action`]="{ item }">
-                <v-icon small class="mr-2" color="grey" @click="editUser(item)">mdi-pencil-box-outline</v-icon>
-                <v-icon small class="mr-2" color="grey" @click="deleteUser(item)">mdi-delete</v-icon>
+                <v-icon small color="grey" @click="editUser(item)">mdi-pencil-box-outline</v-icon>
+                <v-icon small color="grey" @click="deleteUser(item)">mdi-delete</v-icon>
             </template>
 
             <template v-slot:bottom>
                 <div class="text-center pt-2">
-                    <v-pagination :length="totalPages" :model-value="localPage" @update:model-value="updatePage" />
+                    <v-pagination
+                        density="compact"
+                        color="green-darken-4"
+                        :length="totalPages"
+                        :model-value="localPage"
+                        @update:model-value="updatePage"
+                    />
                 </div>
             </template>
         </v-data-table>
@@ -107,7 +113,7 @@ export default defineComponent({
                     value: 'fullName',
                     sortable: false
                 },
-                { title: 'Action', value: 'action', sortable: false }
+                { title: 'Action', value: 'action', sortable: false, align: 'end' }
             ];
         },
 
@@ -130,7 +136,7 @@ export default defineComponent({
         },
 
         editUser(user: IUserItem) {
-            this.$emit('edit-user', user);
+            this.$router.push({ path: '/user', query: { id: user.id } });
         },
 
         deleteUser(user: IUserItem) {
