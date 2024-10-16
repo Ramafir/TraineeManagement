@@ -21,7 +21,12 @@
             </v-btn>
         </div>
 
-        <v-data-table :items="users" :items-per-page="perPage" :headers="labels" class="v-data-table--with-background">
+        <v-data-table
+            :items="filteredUsers"
+            :items-per-page="perPage"
+            :headers="labels"
+            class="v-data-table--with-background"
+        >
             <template v-slot:[`item.avatar`]="{ item }">
                 <v-avatar size="32">
                     <img :src="item.avatar" alt="User avatar" />
