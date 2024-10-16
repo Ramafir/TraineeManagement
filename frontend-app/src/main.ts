@@ -1,7 +1,8 @@
+import '@/bootstrap/axios.config';
 import '@/assets/styles/main.scss';
 
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
+import { store } from '@/store';
 
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
@@ -20,7 +21,7 @@ const vuetify = createVuetify({
     directives
 });
 
-app.use(createPinia());
+app.use(store);
 app.use(vuetify);
 app.use(router);
 
