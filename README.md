@@ -1,29 +1,24 @@
-# frontend-app
+# trainee-manager-app
 
-This template should help get you started developing with Vue 3 in Vite.
+Trainee Manager
 
-## Recommended IDE Setup
+## Prerequisites
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+-   Node.js - ^20.0.0
+-   NPM - ^10.0.0
 
-## Type Support for `.vue` Imports in TS
+### Install frontend app dependencies
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+-   Go to the root directory
+-   Install NPM dependencies: `npm i`
+-   Copy `.env` file from `.env.example` by `cp .env.example .env` and edit `.env` file with your variables (you can use default variables without changing anything)
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
+## Run
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+You can run frontend app with `npm run dev`
 ```
 
 ### Type-Check, Compile and Minify for Production

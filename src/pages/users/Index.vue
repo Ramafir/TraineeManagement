@@ -1,5 +1,13 @@
 <template>
-    <user-table :users="items" @delete-user="openConfirmDelete" />
+    <user-table
+        :users="items"
+        :total="pagination.total"
+        :per-page="pagination.perPage"
+        :page="pagination.page"
+        :total-pages="pagination.totalPages"
+        @delete-user="openConfirmDelete"
+        @update-page="onPageChange"
+    />
 
     <confirm-delete
         v-if="showConfirmDelete"
@@ -33,7 +41,8 @@ export default defineComponent({
             pagination: {
                 page: 1,
                 total: 0,
-                perPage: 10,
+                perPage: 6,
+                totalPages: 0,
                 descending: false,
                 search: ''
             },
@@ -55,23 +64,6 @@ export default defineComponent({
         this.getUsers();
     },
 
-    computed: {
-        labels(): ITableLabel[] {
-            return [
-                {
-                    value: 'avatar',
-                    sortable: false
-                },
-                {
-                    title: 'Full Name',
-                    value: 'fullName',
-                    sortable: false
-                },
-                { title: 'Action', value: 'action', sortable: false }
-            ];
-        }
-    },
-
     methods: {
         ...mapActions(useUsersStore, ['index', 'destroy']),
 
@@ -79,9 +71,11 @@ export default defineComponent({
             this.isLoading = true;
 
             try {
-                const { data, total } = await this.index(this.pagination);
+                const { data, total, total_pages } = await this.index(this.pagination);
 
                 this.pagination.total = total;
+                this.pagination.totalPages = total_pages;
+
                 this.items = data;
             } catch (error) {
                 this.$toastError();
@@ -104,8 +98,14 @@ export default defineComponent({
 
                 this.showConfirmDelete = false;
             } catch (error) {
-                this.$toastError()
+                this.$toastError();
             }
+        },
+
+        async onPageChange(newPage: number) {
+            this.pagination.page = newPage;
+
+            await this.getUsers();
         }
     }
 });

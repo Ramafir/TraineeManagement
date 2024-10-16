@@ -4,7 +4,6 @@ import { defineStore } from 'pinia';
 import type { IIndexParams } from '@/types/common';
 import type { ITablePagination } from '@/types/table';
 import type { ICreateUserData, IUserItem, IUserState } from '@/types/user';
-import { th } from 'vuetify/locale';
 
 export const useUsersStore = defineStore('users', {
     state: (): IUserState => {
@@ -18,7 +17,7 @@ export const useUsersStore = defineStore('users', {
     },
 
     actions: {
-        async index(pagination: ITablePagination): Promise<{ data: IUserItem[]; total: number }> {
+        async index(pagination: ITablePagination): Promise<{ data: IUserItem[]; total: number; total_pages: number }> {
             const { page, search } = pagination;
 
             const params: IIndexParams = { page };
@@ -29,11 +28,11 @@ export const useUsersStore = defineStore('users', {
 
             const response = await axios.get('/users', { params });
 
-            const { data, total } = response.data;
+            const { data, total, total_pages } = response.data;
 
             this.users = data;
 
-            return { data, total };
+            return { data, total, total_pages };
         },
 
         async store(data: ICreateUserData): Promise<IUserItem> {
@@ -42,6 +41,10 @@ export const useUsersStore = defineStore('users', {
             this.stored(user);
 
             return user;
+        },
+
+        show(id: string): Promise<IUserItem> {
+            return axios.get(`/users/${id}`);
         },
 
         async update(data: ICreateUserData, id: string): Promise<IUserItem> {
