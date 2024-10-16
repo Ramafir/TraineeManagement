@@ -3,7 +3,8 @@ import { defineStore } from 'pinia';
 
 import type { IIndexParams } from '@/types/common';
 import type { ITablePagination } from '@/types/table';
-import type { IUserItem, IUserState } from '@/types/user';
+import type { ICreateUserData, IUserItem, IUserState } from '@/types/user';
+import { th } from 'vuetify/locale';
 
 export const useUsersStore = defineStore('users', {
     state: (): IUserState => {
@@ -33,6 +34,34 @@ export const useUsersStore = defineStore('users', {
             this.users = data;
 
             return { data, total };
+        },
+
+        async store(data: ICreateUserData): Promise<IUserItem> {
+            const user: IUserItem = await axios.post('/users', data);
+
+            this.stored(user);
+
+            return user;
+        },
+
+        async update(data: ICreateUserData, id: string): Promise<IUserItem> {
+            const user: IUserItem = await axios.put(`/users/${id}`, data);
+
+            this.updated(user);
+
+            return user;
+        },
+
+        stored(user: IUserItem) {
+            this.users.push(user);
+        },
+
+        updated(user: IUserItem) {
+            const index = this.users.findIndex(storedUser => storedUser.id === user.id);
+
+            if (~index) {
+                this.users.splice(index, 1, user);
+            }
         },
 
         async destroy(id: string) {
