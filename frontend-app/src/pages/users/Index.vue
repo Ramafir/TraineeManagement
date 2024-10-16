@@ -84,7 +84,7 @@ export default defineComponent({
                 this.pagination.total = total;
                 this.items = data;
             } catch (error) {
-                console.log(error);
+                this.$toastError();
             } finally {
                 this.isLoading = false;
             }
@@ -100,9 +100,11 @@ export default defineComponent({
             try {
                 await this.destroy(this.selectedId);
 
+                this.$toast('User deleted succesfully!');
+
                 this.showConfirmDelete = false;
             } catch (error) {
-                console.error(error);
+                this.$toastError()
             }
         }
     }
