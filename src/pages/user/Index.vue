@@ -15,7 +15,7 @@
                                 variant="outlined"
                                 density="compact"
                                 v-model="formData.first_name"
-                                hide-details
+                                :error-messages="v$.formData.first_name.$errors.map(e => e.$message)"
                             />
                         </v-col>
                         <v-col cols="12" md="6" class="mt-10">
@@ -26,7 +26,7 @@
                                 variant="outlined"
                                 density="compact"
                                 v-model="formData.last_name"
-                                hide-details
+                                :error-messages="v$.formData.last_name.$errors.map(e => e.$message)"
                             />
                         </v-col>
                     </v-row>
@@ -78,8 +78,9 @@
 
 <script lang="ts">
 import { mapActions } from 'pinia';
-import { defineComponent, ref } from 'vue';
-import { maxLength, minLength, required } from '@vuelidate/validators';
+import { defineComponent } from 'vue';
+import useVuelidate from '@vuelidate/core';
+import { maxLength, minLength, required, helpers } from '@vuelidate/validators';
 
 import { useUsersStore } from '@/store/modules/users';
 
@@ -112,6 +113,7 @@ export default defineComponent({
                     minLength: minLength(2),
                     maxLength: maxLength(250)
                 },
+
                 last_name: {
                     required,
                     minLength: minLength(2),
@@ -119,6 +121,12 @@ export default defineComponent({
                 }
             }
         };
+    },
+
+    setup() {
+        const v$ = useVuelidate();
+
+        return { v$ };
     },
 
     async mounted() {
@@ -156,6 +164,14 @@ export default defineComponent({
         },
 
         async submitHandler() {
+            this.v$.$touch();
+
+            if (this.v$.$invalid) {
+                this.$toastError('Please correct the form errors');
+
+                return;
+            }
+
             try {
                 const data = {
                     first_name: this.formData.first_name,
